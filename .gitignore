@@ -1,0 +1,15 @@
+node_modules/
+.npm-cache/
+training/tools/
+artifacts/verified-export.json
+dist/
+.env
+.env.*
+!.env.example
+server/data/
+data/
+samples/generated/
+*.log
+coverage/
+*.traineddata*
+.DS_Store

@@ -1,0 +1,43 @@
+services:
+  app:
+    build: .
+    ports: ['4000:4000']
+    environment:
+      NODE_ENV: production
+      # Local Docker uses HTTP. For hosted HTTPS, set COOKIE_SECURE=true.
+      COOKIE_SECURE: 'false'
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in a root .env (32+ random characters)}
+      CLIENT_ORIGIN: http://localhost:4000
+      MONGODB_URI: mongodb://mongo:27017/docscrape
+      REDIS_URL: redis://redis:6379
+      AI_PROVIDER: ${AI_PROVIDER:-local}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4o-mini}
+    volumes: ['documents:/app/server/data']
+    depends_on:
+      mongo: { condition: service_healthy }
+      redis: { condition: service_healthy }
+    restart: unless-stopped
+  mongo:
+    image: mongo:7
+    volumes: ['mongo-data:/data/db']
+    healthcheck:
+      test: ['CMD', 'mongosh', '--quiet', '--eval', "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+  redis:
+    image: redis:7-alpine
+    command: ['redis-server', '--appendonly', 'yes']
+    volumes: ['redis-data:/data']
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+volumes:
+  documents:
+  mongo-data:
+  redis-data:

@@ -1,0 +1,42 @@
+{
+  "name": "docscrape-ai",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "dev": "concurrently -k -n api,web -c cyan,magenta \"npm run dev -w server\" \"npm run dev -w client\"",
+    "build": "npm run build -w server && npm run build -w client",
+    "typecheck": "npm run typecheck -w server && npm run typecheck -w client",
+    "test": "npm run test -w server",
+    "start": "npm run start -w server",
+    "samples": "npm run samples -w server",
+    "test:browser": "node scripts/browser-smoke.mjs",
+    "test:beta": "node scripts/beta-browser-smoke.mjs",
+    "test:cropper": "node scripts/cropper-browser-smoke.mjs",
+    "test:ocr": "npm run test:ocr -w server",
+    "training:build": "docker build -t docscrape-trainer:local -f training/Dockerfile training",
+    "training:setup": "node scripts/setup-local-trainer.mjs",
+    "training:smoke": "npm run training:smoke -w server",
+    "training:native-smoke": "npm run training:native-smoke -w server",
+    "format": "prettier --write client/src server/src server/tests server/scripts scripts training/worker.mjs docs README.md *.json *.yaml .github/workflows"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "playwright": "^1.56.0",
+    "prettier": "^3.6.2"
+  },
+  "overrides": {
+    "exceljs": {
+      "uuid": "^11.1.1"
+    },
+    "mammoth": {
+      "argparse": "^2.0.1"
+    }
+  },
+  "engines": {
+    "node": ">=22.12"
+  }
+}

@@ -1,0 +1,9 @@
+node_modules
+**/node_modules
+**/dist
+.git
+.npm-cache
+**/.env
+**/data
+samples/generated
+artifacts
